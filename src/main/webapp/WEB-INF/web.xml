@@ -10,16 +10,16 @@
         <param-value>false</param-value>
     </context-param>
     <servlet>
-        <servlet-name>Vaadin Application Servlet</servlet-name>
+        <servlet-name>Vaadin Application</servlet-name>
         <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
         <init-param>
-            <description>Vaadin UI to display</description>
+            <description>Vaadin Application</description>
             <param-name>UI</param-name>
-            <param-value>com.haulmont.testtask.MainUI</param-value>
+            <param-value>com.haulmont.testtask.ui.MainUI</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Vaadin Application Servlet</servlet-name>
+        <servlet-name>Vaadin Application</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
