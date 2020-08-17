@@ -1,6 +1,9 @@
 package com.haulmont.testtask.dao;
 
-import com.haulmont.testtask.entity.*;
+import com.haulmont.testtask.entity.Doctor;
+import com.haulmont.testtask.entity.Patient;
+import com.haulmont.testtask.entity.Priority;
+import com.haulmont.testtask.entity.Recipe;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +18,7 @@ public class RecipeDAO {
     public void add(Recipe recipe) {
         String request = "INSERT INTO RECIPE (DESCRIPTION, PATIENT, DOCTOR, CREATION_DATE, " +
                 "EXPIRATION_DATE, PRIORITY) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setString(1, recipe.getDescription());
@@ -37,7 +40,7 @@ public class RecipeDAO {
                 "INNER JOIN DOCTOR ON RECIPE.DOCTOR = DOCTOR.ID";
         List<Recipe> recipeList = new LinkedList<>();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             ResultSet resultSet = statement.executeQuery();
@@ -51,19 +54,19 @@ public class RecipeDAO {
         return recipeList;
     }
 
-    public List<Recipe> findByDescription(String description){
+    public List<Recipe> findByDescription(String description) {
         String request = "SELECT * FROM RECIPE " +
                 "INNER JOIN PATIENT ON RECIPE.PATIENT = PATIENT.ID " +
                 "INNER JOIN DOCTOR ON RECIPE.DOCTOR = DOCTOR.ID " +
-                "WHERE DESCRIPTION LIKE ?";
+                "WHERE LOWER(DESCRIPTION) LIKE LOWER(?)";
         List<Recipe> recipeList = new LinkedList<>();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
             statement.setString(1, "%" + description + "%");
 
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 recipeList.add(createRecipe(resultSet));
             }
         } catch (SQLException throwables) {
@@ -72,19 +75,19 @@ public class RecipeDAO {
         return recipeList;
     }
 
-    public List<Recipe> findByPriority(Priority priority){
+    public List<Recipe> findByPriority(Priority priority) {
         String request = "SELECT * FROM RECIPE " +
                 "INNER JOIN PATIENT ON RECIPE.PATIENT = PATIENT.ID " +
                 "INNER JOIN DOCTOR ON RECIPE.DOCTOR = DOCTOR.ID " +
                 "WHERE PRIORITY LIKE ?";
         List<Recipe> recipeList = new LinkedList<>();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
             statement.setString(1, priority.toString());
 
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 recipeList.add(createRecipe(resultSet));
             }
         } catch (SQLException throwables) {
@@ -93,19 +96,19 @@ public class RecipeDAO {
         return recipeList;
     }
 
-    public List<Recipe> findByPatient(Patient patient){
+    public List<Recipe> findByPatient(Patient patient) {
         String request = "SELECT * FROM RECIPE " +
                 "INNER JOIN PATIENT ON RECIPE.PATIENT = PATIENT.ID " +
                 "INNER JOIN DOCTOR ON RECIPE.DOCTOR = DOCTOR.ID " +
                 "WHERE PATIENT.ID = ?";
         List<Recipe> recipeList = new LinkedList<>();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
             statement.setLong(1, patient.getId());
 
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 recipeList.add(createRecipe(resultSet));
             }
         } catch (SQLException throwables) {
@@ -143,7 +146,7 @@ public class RecipeDAO {
         String request = "UPDATE RECIPE SET DESCRIPTION=?, PATIENT=?, DOCTOR=?, " +
                 "CREATION_DATE=?, EXPIRATION_DATE=?, PRIORITY=? WHERE ID=?";
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setString(1, recipe.getDescription());
@@ -163,13 +166,13 @@ public class RecipeDAO {
     public void remove(Recipe recipe) {
         String request = "DELETE FROM RECIPE WHERE ID=?";
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setLong(1, recipe.getId());
 
             statement.executeUpdate();
-        }  catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }

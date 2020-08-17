@@ -12,7 +12,7 @@ public class DoctorDAO {
 
     public void add(Doctor doctor) {
         String request = "INSERT INTO DOCTOR (FIRST_NAME, LAST_NAME, SECOND_NAME, SPECIALIZATION) VALUES (?, ?, ?, ?)";
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setString(1, doctor.getFirstName());
@@ -30,7 +30,7 @@ public class DoctorDAO {
         String request = "SELECT * FROM DOCTOR";
         List<Doctor> doctorList = new LinkedList<>();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             ResultSet resultSet = statement.executeQuery();
@@ -52,7 +52,7 @@ public class DoctorDAO {
     public void update(Doctor doctor) {
         String request = "UPDATE DOCTOR SET FIRST_NAME=?, LAST_NAME=?, SECOND_NAME=?, SPECIALIZATION=? WHERE ID=?";
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setString(1, doctor.getFirstName());
@@ -71,13 +71,13 @@ public class DoctorDAO {
         String request = "DELETE FROM DOCTOR WHERE ID=?";
         boolean isRemoved = true;
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setLong(1, doctor.getId());
 
             statement.executeUpdate();
-        } catch (SQLIntegrityConstraintViolationException e){
+        } catch (SQLIntegrityConstraintViolationException e) {
             isRemoved = false;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -86,7 +86,7 @@ public class DoctorDAO {
         return isRemoved;
     }
 
-    public RecipeStatistics getStatistics(Doctor doctor){
+    public RecipeStatistics getStatistics(Doctor doctor) {
         String request = "SELECT DISTINCT\n" +
                 "(SELECT COUNT(*) FROM DOCTOR INNER JOIN RECIPE ON DOCTOR.ID = RECIPE.DOCTOR " +
                 "WHERE DOCTOR.ID = ? AND PRIORITY = 'STANDARD') AS STANDARD, " +
@@ -98,7 +98,7 @@ public class DoctorDAO {
 
         RecipeStatistics recipeStatistics = new RecipeStatistics();
 
-        try (Connection connection = ConnectionUtil.getConnection();
+        try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(request)) {
 
             statement.setLong(1, doctor.getId());

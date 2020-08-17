@@ -19,7 +19,7 @@ public class Recipe {
     private Priority priority;
 
     public Recipe(Long id, String description, Patient patient, Doctor doctor,
-                  LocalDate creationDate,  LocalDate expirationDate, Priority priority) {
+                  LocalDate creationDate, LocalDate expirationDate, Priority priority) {
         this.id = id;
         this.description = description;
         this.patient = patient;

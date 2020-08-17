@@ -2,7 +2,7 @@ package com.haulmont.testtask.entity;
 
 public class Doctor {
 
-    private Long   id;
+    private Long id;
 
     private String firstName;
 
